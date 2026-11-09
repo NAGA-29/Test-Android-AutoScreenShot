@@ -1,0 +1,11 @@
+name = "screenshot-receiver"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "screenshots"
+
+# 認証トークン(任意)は secret で設定する:
+#   npx wrangler secret put AUTH_TOKEN
+# ローカル開発時は .dev.vars に AUTH_TOKEN=xxxx と書く。未設定なら認証なし。
