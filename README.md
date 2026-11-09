@@ -7,7 +7,7 @@ Android端末の画面を定期キャプチャ→縮小/JPEG圧縮→サーバ�
 
 - `android/` — Kotlin製 Androidアプリ(Gradle)
   - `ScreenSource` インターフェースで取得方式を切り替え:
-    - `RootScreenSource` — root端末向け。`su -c screencap` をファイル経由で読む(フェーズ1)
+    - `RootScreenSource` — root端末向け。su 書式を自動判別(`su 0` / `su root` / `su -c`)して screencap をファイル経由で読む(フェーズ1)
     - `A11yScreenSource` — root無し / Android 11-14 向け。`AccessibilityService.takeScreenshot()`(フェーズ2)
   - 共通パイプライン(`CapturePipeline`): capture → downscale → 差分検知 → JPEG → Outbox → POST → リトライ
   - `CaptureService` — プレーンな前景サービス(MediaProjectionなし)でタイマーループを回す

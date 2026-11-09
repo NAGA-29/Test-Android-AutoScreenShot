@@ -33,11 +33,12 @@ class CaptureService : Service() {
     }
 
     private fun start() {
-        // Su.available() は su プロセス起動を待つブロッキング呼び出しなので、
+        // ensureRoot() は su プロセス起動を待つブロッキング呼び出しなので、
         // メインスレッド(onStartCommand)で直接呼ぶと ANR になりうる。IO に逃がす。
         job = scope.launch(Dispatchers.IO) {
-            val source: ScreenSource? = if (Su.available()) {
-                RootScreenSource(applicationContext)
+            val rootSource = RootScreenSource()
+            val source: ScreenSource? = if (rootSource.ensureRoot()) {
+                rootSource
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && A11ySetup.isEnabled(applicationContext)) {
                 A11yScreenSource()
             } else {
