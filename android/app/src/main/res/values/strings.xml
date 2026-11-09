@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Screenshot Poster</string>
+    <string name="a11y_description">定期的に画面をキャプチャしてサーバーへ送信します。</string>
+</resources>
