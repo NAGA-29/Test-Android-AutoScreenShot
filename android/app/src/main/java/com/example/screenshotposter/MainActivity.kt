@@ -44,8 +44,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.buttonEnableA11y).setOnClickListener {
-            val ok = A11ySetup.tryEnableSilently(this)
-            textStatus.text = if (ok) "a11y 有効化 OK" else "a11y 有効化 失敗 (WRITE_SECURE_SETTINGS 未付与?)"
+            // root 経由の su を待つのでメインスレッドでは呼ばない
+            Thread {
+                val ok = A11ySetup.tryEnableSilently(this)
+                runOnUiThread {
+                    textStatus.text = if (ok) "a11y 有効化 OK" else "a11y 有効化 失敗 (root なし かつ WRITE_SECURE_SETTINGS 未付与?)"
+                }
+            }.start()
         }
     }
 

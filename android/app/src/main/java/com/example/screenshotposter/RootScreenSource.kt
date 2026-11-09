@@ -60,6 +60,21 @@ class RootScreenSource : ScreenSource {
         return false
     }
 
+    /**
+     * 任意のコマンドを root で実行する (a11y の自動セットアップ用)。ブロッキング。
+     * 成功(exit 0)なら stdout、失敗・root なしなら null。
+     */
+    fun runAsRoot(cmd: List<String>, timeoutSec: Long = 10): String? {
+        if (!ensureRoot()) return null
+        val style = suStyle ?: return null
+        val r = exec(style.build(cmd), timeoutSec) ?: return null
+        if (r.exit != 0) {
+            Log.w(TAG, "runAsRoot failed: exit=${r.exit} cmd=$cmd err=${r.stderr.trim()}")
+            return null
+        }
+        return String(r.stdout)
+    }
+
     override suspend fun capture(): Bitmap? = withContext(Dispatchers.IO) {
         if (!ensureRoot()) return@withContext null
         val style = suStyle ?: return@withContext null

@@ -31,7 +31,7 @@ gradle wrapper --gradle-version 8.7   # 初回のみ(ローカルに Gradle 8.x 
 Android Studio を使う場合はこの手順は不要(プロジェクトを開くだけで wrapper が作られる)。
 
 初回セットアップ:
-- **root端末**: Magiskで本アプリを「常に許可」に設定(初回のみ手動、以後無人)。
+- **root端末**: su の許可ダイアログで本アプリを「常に許可」に設定(初回のみ手動、以後無人)。a11y を使う場合も adb 不要(アプリが su 経由で自分に WRITE_SECURE_SETTINGS を付与する)。
 - **rootなし / Android 11-14**:
   ```bash
   adb shell pm grant com.example.screenshotposter android.permission.WRITE_SECURE_SETTINGS
