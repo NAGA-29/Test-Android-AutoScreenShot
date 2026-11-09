@@ -4,7 +4,7 @@ package com.example.screenshotposter
 object Config {
     const val POST_URL = "https://example.com/upload" // 要書き換え (wrangler dev なら http://<PCのIP>:8787/upload)
     const val AUTH_TOKEN = ""                         // サーバー側 AUTH_TOKEN と同じ値。空なら Authorization を付けない
-    const val CAPTURE_INTERVAL_MS = 5_000L            // a11y takeScreenshot() の下限(約1秒弱)を割らないこと
+    const val CAPTURE_INTERVAL_MS = 30_000L           // a11y takeScreenshot() の下限(約1秒弱)を割らないこと
     const val TARGET_WIDTH = 720
     const val JPEG_QUALITY = 60
 
