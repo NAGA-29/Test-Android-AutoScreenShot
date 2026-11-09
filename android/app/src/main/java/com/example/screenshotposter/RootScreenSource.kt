@@ -87,14 +87,14 @@ class RootScreenSource : ScreenSource {
             Log.w(TAG, "decode failed (${cat.stdout.size} bytes)")
             return@withContext null
         }
-        toOpaque(decoded)
+        toOpaque(decoded, cat.stdout.size)
     }
 
     /**
      * screencap の PNG は端末によって alpha が 0 のことがあり、そのまま JPEG にすると
      * 透明=黒で真っ黒になる。alpha を 0xFF に固定した不透明 Bitmap に作り直す。
      */
-    private fun toOpaque(src: Bitmap): Bitmap {
+    private fun toOpaque(src: Bitmap, pngBytes: Int): Bitmap {
         val w = src.width
         val h = src.height
         val px = IntArray(w * h)
@@ -110,7 +110,9 @@ class RootScreenSource : ScreenSource {
             px[i] = c or (0xFF shl 24)
         }
         // 黒画像の切り分け用 (alpha 全 0 なのか、RGB 自体が黒なのか)
-        Log.d(TAG, "frame ${w}x$h transparent=${transparent * 100L / px.size}% meanLuma=${sumLuma / px.size}")
+        val info = "${w}x$h png=${pngBytes}B transparent=${transparent * 100L / px.size}% meanLuma=${sumLuma / px.size}"
+        CaptureState.frameInfo = info
+        Log.d(TAG, "frame $info")
         return Bitmap.createBitmap(px, w, h, Bitmap.Config.ARGB_8888)
     }
 

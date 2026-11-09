@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity() {
             append("source=${CaptureState.sourceName}\n")
             append("captured=${CaptureState.captured} sent=${CaptureState.sent} skipped=${CaptureState.skipped} pending=${CaptureState.pending}\n")
             append("last=${CaptureState.lastEvent}\n")
+            append("frame=${CaptureState.frameInfo}\n")
             append("error=${CaptureState.lastError ?: "-"}\n")
             append("a11y_enabled=${if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) A11ySetup.isEnabled(this@MainActivity) else "N/A (<API30)"}\n")
         }
