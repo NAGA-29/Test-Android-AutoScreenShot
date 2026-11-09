@@ -77,9 +77,41 @@ class RootScreenSource : ScreenSource {
             return@withContext null
         }
 
-        BitmapFactory.decodeByteArray(cat.stdout, 0, cat.stdout.size).also {
-            if (it == null) Log.w(TAG, "decode failed (${cat.stdout.size} bytes)")
+        // inPremultiplied=false: alpha=0 の画素の RGB を事前乗算で 0(黒)に潰さないため。
+        val opts = BitmapFactory.Options().apply {
+            inPreferredConfig = Bitmap.Config.ARGB_8888
+            inPremultiplied = false
         }
+        val decoded = BitmapFactory.decodeByteArray(cat.stdout, 0, cat.stdout.size, opts)
+        if (decoded == null) {
+            Log.w(TAG, "decode failed (${cat.stdout.size} bytes)")
+            return@withContext null
+        }
+        toOpaque(decoded)
+    }
+
+    /**
+     * screencap の PNG は端末によって alpha が 0 のことがあり、そのまま JPEG にすると
+     * 透明=黒で真っ黒になる。alpha を 0xFF に固定した不透明 Bitmap に作り直す。
+     */
+    private fun toOpaque(src: Bitmap): Bitmap {
+        val w = src.width
+        val h = src.height
+        val px = IntArray(w * h)
+        src.getPixels(px, 0, w, 0, 0, w, h)
+        src.recycle()
+
+        var transparent = 0
+        var sumLuma = 0L
+        for (i in px.indices) {
+            val c = px[i]
+            if ((c ushr 24) == 0) transparent++
+            sumLuma += (((c shr 16) and 0xFF) * 299 + ((c shr 8) and 0xFF) * 587 + (c and 0xFF) * 114) / 1000
+            px[i] = c or (0xFF shl 24)
+        }
+        // 黒画像の切り分け用 (alpha 全 0 なのか、RGB 自体が黒なのか)
+        Log.d(TAG, "frame ${w}x$h transparent=${transparent * 100L / px.size}% meanLuma=${sumLuma / px.size}")
+        return Bitmap.createBitmap(px, w, h, Bitmap.Config.ARGB_8888)
     }
 
     private class ExecResult(val exit: Int, val stdout: ByteArray, val stderr: String)
