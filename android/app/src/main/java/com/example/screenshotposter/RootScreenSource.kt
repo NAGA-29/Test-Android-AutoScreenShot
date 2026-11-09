@@ -41,6 +41,11 @@ class RootScreenSource : ScreenSource {
     @Volatile
     private var suStyle: SuStyle? = null
 
+    /** root を取れなかった理由 (診断画面用)。例: su を起動できない = アプリに su の実行権限がない。 */
+    @Volatile
+    var lastFailure: String? = null
+        private set
+
     /**
      * root を取れるか。ブロッキング (su プロセス起動を待つので IO スレッドから呼ぶこと)。
      * 最初に `uid=0` を返した書式をキャッシュする。
@@ -56,6 +61,7 @@ class RootScreenSource : ScreenSource {
                 return true
             }
             Log.w(TAG, "style=$style rejected: exit=${r.exit} out=${text.trim()} err=${r.stderr.trim()}")
+            lastFailure = "su ${style.name} rejected: exit=${r.exit} ${r.stderr.trim()}".trim()
         }
         return false
     }
@@ -159,6 +165,7 @@ class RootScreenSource : ScreenSource {
         }
     } catch (e: Exception) { // su が無い端末は IOException
         Log.w(TAG, "exec failed: $args: ${e.message}")
+        lastFailure = e.message
         null
     }
 

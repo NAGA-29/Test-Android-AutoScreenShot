@@ -42,7 +42,7 @@ class CaptureService : Service() {
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && A11ySetup.isEnabled(applicationContext)) {
                 A11yScreenSource()
             } else {
-                CaptureState.lastError = "no capture method available (root なし かつ a11y 未設定、または OS < 11)"
+                CaptureState.lastError = "no capture method available (root なし かつ a11y 未設定、または OS < 11). su: ${rootSource.lastFailure ?: "-"}"
                 null
             }
 
