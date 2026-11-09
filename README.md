@@ -10,7 +10,8 @@ Android端末の画面を定期キャプチャ→縮小/JPEG圧縮→サーバ�
     - `RootScreenSource` — root端末向け。su 書式を自動判別(`su 0` / `su root` / `su -c`)して screencap をファイル経由で読む(フェーズ1)
     - `A11yScreenSource` — root無し / Android 11-14 向け。`AccessibilityService.takeScreenshot()`(フェーズ2)
   - 共通パイプライン(`CapturePipeline`): capture → downscale → 差分検知 → JPEG → Outbox → POST → リトライ
-  - Outbox の保存先: `/sdcard/Android/data/com.example.screenshotposter/files/outbox/`(送信成功分は削除。外部ストレージ不可なら内部領域)
+  - Outbox(送信待ちキュー): `/sdcard/Android/data/com.example.screenshotposter/files/outbox/`(外部ストレージ不可なら内部領域)
+  - 確認用に最新フレームを `Download/sspost_latest.jpg` に上書き保存(API 29+、`Config.SAVE_LOCAL_COPY`)
   - `CaptureService` — プレーンな前景サービス(MediaProjectionなし)でタイマーループを回す
   - `MainActivity` — 開始/停止、a11yサービスの無人有効化ボタン、簡易ステータス表示
 - `server/` — Cloudflare Workers (Hono) + R2 の受け側。multipart を受けてR2に保存するだけの最小実装

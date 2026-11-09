@@ -56,13 +56,12 @@ class CaptureService : Service() {
             CaptureState.sourceName = source.name
             CaptureState.running = true
 
-            // 確認しやすいよう外部ストレージ(アプリ専用領域)に置く。
-            // /sdcard/Android/data/<pkg>/files/outbox  (権限不要、adb pull や PC 接続で見える)。
-            // 外部ストレージが使えない場合のみ内部領域にフォールバック。
+            // Outbox は外部ストレージ(アプリ専用領域): /sdcard/Android/data/<pkg>/files/outbox
+            // 使えない場合のみ内部領域にフォールバック。
             val outboxDir = applicationContext.getExternalFilesDir("outbox")
                 ?: applicationContext.getDir("outbox", MODE_PRIVATE)
             val outbox = Outbox(outboxDir)
-            val pipeline = CapturePipeline(source, outbox, Uploader())
+            val pipeline = CapturePipeline(source, outbox, Uploader()) { LocalCopy.saveLatest(applicationContext, it) }
             pipeline.run()
         }
     }

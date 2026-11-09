@@ -16,6 +16,7 @@ class CapturePipeline(
     private val source: ScreenSource,
     private val outbox: Outbox,
     private val uploader: Uploader,
+    private val onJpeg: ((ByteArray) -> Unit)? = null,
 ) {
     private var lastSig: IntArray? = null
     private var lastSentAt = 0L
@@ -66,6 +67,7 @@ class CapturePipeline(
             }
             val jpeg = ImageProcessor.toJpeg(bmp, Config.JPEG_QUALITY)
             outbox.enqueue("shot_$now.jpg", jpeg)
+            onJpeg?.invoke(jpeg)
             lastSentAt = now
             CaptureState.lastEvent = "queued ${ImageProcessor.kb(jpeg.size)}KB ${bmp.width}x${bmp.height}"
         } finally {
