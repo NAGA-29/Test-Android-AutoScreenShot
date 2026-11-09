@@ -17,6 +17,6 @@ object Config {
     const val OUTBOX_MAX_FILES = 500                  // 超えたら古いものから捨てる
     const val HTTP_TIMEOUT_SEC = 20L
 
-    // 確認用: 最新フレームを Pictures/ScreenshotPoster/latest.jpg に上書き保存 (API 29+)
+    // 確認用: 最新フレームを Download/sspost_latest.jpg に上書き保存 (API 29+)
     const val SAVE_LOCAL_COPY = true
 }
